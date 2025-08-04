@@ -1,0 +1,12 @@
+spring:
+  data:
+    mongodb:
+#      uri: mongodb://127.0.0.1:27017/expense_tracker
+       uri:mongodb+srv://prajwalnarute:Prajwal%40123@foodapp.jdid3cd.mongodb.net/expense_tracker?retryWrites=true&w=majority&appName=foodapp
+  application:
+    name: ExpenseTrackerAPI
+server:
+  port: 8080
+
+expense:
+  opening-balance: 0
