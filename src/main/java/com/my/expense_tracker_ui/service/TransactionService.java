@@ -52,7 +52,8 @@ public class TransactionService {
     public List<TransactionResponse> getAllTransactions() {
         List<Transaction> transactions = repository.findAll()
                 .stream()
-                .sorted(Comparator.comparing(Transaction::getDate))
+                .sorted(Comparator.comparing(Transaction::getDate)
+                        .thenComparing(Transaction::getId)) // Oldest first
                 .collect(Collectors.toList());
 
         double balance = expenseConfig.getOpeningBalance();
@@ -67,6 +68,10 @@ public class TransactionService {
             tx.setRunningBalance(balance);
         }
 
+        // Sort back to newest-first for display
+        transactions.sort(Comparator.comparing(Transaction::getDate).reversed()
+                .thenComparing(Transaction::getId, Comparator.reverseOrder()));
+
         return transactions.stream()
                 .map(tx -> new TransactionResponse(
                         tx.getId(),
@@ -76,8 +81,11 @@ public class TransactionService {
                         tx.getAmount(),
                         tx.getReimbursable(),
                         tx.getComments(),
-                        tx.getRunningBalance()  // <- ensure this is set here
+                        tx.getRunningBalance()
                 ))
                 .collect(Collectors.toList());
     }
+
+
+
 }
