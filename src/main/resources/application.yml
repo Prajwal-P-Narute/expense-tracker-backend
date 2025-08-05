@@ -9,4 +9,4 @@ server:
   port: 8080
 
 expense:
-  opening-balance: 0
+  opening-balance: 50000
