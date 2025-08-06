@@ -21,6 +21,7 @@ public class Transaction {
     private double amount;
     private String reimbursable; // Y or N
     private String comments;
+    private String userEmail;
 
     @Transient
     private double runningBalance; // Add this

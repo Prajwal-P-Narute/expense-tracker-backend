@@ -22,8 +22,8 @@ public class TransactionService {
         this.expenseConfig = expenseConfig;
     }
 
-    public TransactionResponse addTransaction(TransactionRequest request) {
-        List<Transaction> all = repository.findAll();
+    public TransactionResponse addTransaction(TransactionRequest request, String email) {
+        List<Transaction> all = repository.findByUserEmailOrderByDateAscIdAsc(email);
         double latestBalance = all.isEmpty() ? expenseConfig.getOpeningBalance() : all.get(all.size() - 1).getRunningBalance();
 
         double newBalance = request.getType().equalsIgnoreCase("credit")
@@ -38,6 +38,7 @@ public class TransactionService {
                 .reimbursable(request.getReimbursable())
                 .comments(request.getComments())
                 .runningBalance(newBalance)
+                .userEmail(email) //  attach user email from backend
                 .build();
 
         Transaction saved = repository.save(transaction);
@@ -49,12 +50,8 @@ public class TransactionService {
         );
     }
 
-    public List<TransactionResponse> getAllTransactions() {
-        List<Transaction> transactions = repository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Transaction::getDate)
-                        .thenComparing(Transaction::getId)) // Oldest first
-                .collect(Collectors.toList());
+    public List<TransactionResponse> getAllTransactions(String userEmail) {
+        List<Transaction> transactions = repository.findByUserEmailOrderByDateAscIdAsc(userEmail);
 
         double balance = expenseConfig.getOpeningBalance();
 
@@ -85,6 +82,7 @@ public class TransactionService {
                 ))
                 .collect(Collectors.toList());
     }
+
 
 
 
